@@ -1,0 +1,1016 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Italiano">
+<meta name="theme-color" content="#1a0f00">
+<title>Italiano — 我的意大利语</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+:root{
+  --cream:#faf6f0;--warm:#f5ede0;--amber:#e8954a;--amber-deep:#c4713a;--amber-glow:#f5a623;
+  --brown:#3d1f08;--brown-mid:#7a4520;--brown-light:#b07040;
+  --night:#0f0800;--night2:#1a1000;--card:#fffdf9;
+  --green:#4caf76;--red:#e05555;--blue:#4a8fe8;
+  --text:#2a1500;--muted:#8a6040;--hint:#c4a882;
+}
+html,body{height:100%;background:var(--night);overflow:hidden;font-family:'DM Sans',sans-serif;color:var(--cream)}
+#app{height:100vh;height:100dvh;display:flex;flex-direction:column;overflow:hidden;position:relative}
+
+/* ── Grain overlay ── */
+#app::before{content:'';position:fixed;inset:0;opacity:.04;pointer-events:none;z-index:999;
+  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-size:180px}
+
+/* ── Screens ── */
+.screen{display:none;flex-direction:column;height:100%;overflow:hidden}
+.screen.active{display:flex}
+
+/* ── HOME ── */
+#home{background:linear-gradient(170deg,#1a0e00 0%,#0f0800 60%,#160a00 100%)}
+.home-bg{position:absolute;inset:0;overflow:hidden;pointer-events:none}
+.home-bg .orb{position:absolute;border-radius:50%;filter:blur(60px);opacity:.25}
+.orb1{width:280px;height:280px;background:#e8954a;top:-60px;right:-80px}
+.orb2{width:200px;height:200px;background:#c4713a;bottom:20%;left:-60px}
+.orb3{width:150px;height:150px;background:#f5a623;bottom:5%;right:10%}
+.home-scroll{flex:1;overflow-y:auto;overflow-x:hidden;padding:0 20px 100px;-webkit-overflow-scrolling:touch}
+.home-scroll::-webkit-scrollbar{display:none}
+
+.top-bar{display:flex;align-items:center;justify-content:space-between;padding:56px 0 20px}
+.greeting{font-size:13px;color:var(--hint);letter-spacing:.08em;text-transform:uppercase}
+.streak-badge{display:flex;align-items:center;gap:6px;background:rgba(232,149,74,.15);border:1px solid rgba(232,149,74,.3);border-radius:20px;padding:6px 14px;font-size:14px;font-weight:500}
+.streak-fire{font-size:18px}
+
+.hero-title{font-family:'Playfair Display',serif;font-size:42px;font-weight:700;line-height:1.1;margin:8px 0 4px}
+.hero-title em{font-style:italic;color:var(--amber)}
+.hero-sub{font-size:14px;color:var(--hint);margin-bottom:28px}
+
+/* XP bar */
+.xp-wrap{background:rgba(255,255,255,.06);border-radius:12px;padding:14px 16px;margin-bottom:20px;border:1px solid rgba(255,255,255,.08)}
+.xp-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
+.xp-level{font-size:12px;color:var(--hint);letter-spacing:.06em;text-transform:uppercase}
+.xp-pts{font-size:13px;font-weight:500;color:var(--amber)}
+.xp-bar{height:6px;background:rgba(255,255,255,.1);border-radius:3px;overflow:hidden}
+.xp-fill{height:100%;background:linear-gradient(90deg,var(--amber-deep),var(--amber-glow));border-radius:3px;transition:width 1s cubic-bezier(.4,0,.2,1)}
+
+/* Today tasks */
+.section-label{font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--hint);margin-bottom:12px}
+.task-cards{display:flex;flex-direction:column;gap:12px;margin-bottom:24px}
+.task-card{background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.1);border-radius:18px;padding:18px;display:flex;align-items:center;gap:14px;cursor:pointer;transition:transform .15s,background .15s;position:relative;overflow:hidden}
+.task-card:active{transform:scale(.97)}
+.task-card.done{background:rgba(76,175,118,.1);border-color:rgba(76,175,118,.3)}
+.task-card.done .task-icon{background:rgba(76,175,118,.2)}
+.task-icon{width:48px;height:48px;border-radius:14px;background:rgba(232,149,74,.15);display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0}
+.task-info{flex:1}
+.task-name{font-size:16px;font-weight:500;margin-bottom:3px}
+.task-desc{font-size:13px;color:var(--hint)}
+.task-arrow{font-size:20px;color:var(--hint);opacity:.5}
+.task-done-badge{position:absolute;top:12px;right:12px;background:var(--green);color:#fff;font-size:11px;font-weight:500;padding:3px 10px;border-radius:10px}
+.review-badge{position:absolute;top:12px;right:12px;background:var(--amber);color:#fff;font-size:11px;font-weight:500;padding:3px 10px;border-radius:10px}
+
+/* Stats row */
+.stats-row{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:24px}
+.stat-box{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.08);border-radius:14px;padding:14px 10px;text-align:center}
+.stat-num{font-family:'Playfair Display',serif;font-size:24px;font-weight:700;color:var(--amber)}
+.stat-lbl{font-size:11px;color:var(--hint);margin-top:2px}
+
+/* Bottom nav */
+.bottom-nav{position:fixed;bottom:0;left:0;right:0;height:80px;background:rgba(15,8,0,.9);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-top:1px solid rgba(255,255,255,.08);display:flex;align-items:center;justify-content:space-around;padding-bottom:env(safe-area-inset-bottom,0px);z-index:100}
+.nav-btn{display:flex;flex-direction:column;align-items:center;gap:4px;padding:8px 20px;cursor:pointer;opacity:.45;transition:opacity .2s}
+.nav-btn.active{opacity:1}
+.nav-icon{font-size:22px}
+.nav-lbl{font-size:10px;letter-spacing:.04em}
+
+/* ── VOCAB SCREEN ── */
+#vocab{background:var(--night)}
+.vocab-header{padding:54px 20px 16px;display:flex;align-items:center;gap:12px;flex-shrink:0}
+.back-btn{width:38px;height:38px;border-radius:12px;background:rgba(255,255,255,.08);border:none;color:var(--cream);font-size:20px;cursor:pointer;display:flex;align-items:center;justify-content:center}
+.screen-title{font-family:'Playfair Display',serif;font-size:24px;flex:1}
+.progress-ring-wrap{flex-shrink:0}
+
+.vocab-body{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:0 24px;gap:20px}
+/* Card flip */
+.flip-card{width:100%;max-width:340px;height:210px;perspective:1000px;cursor:pointer}
+.flip-inner{width:100%;height:100%;transition:transform .55s cubic-bezier(.4,0,.2,1);transform-style:preserve-3d;position:relative}
+.flip-inner.flipped{transform:rotateY(180deg)}
+.flip-face{position:absolute;inset:0;backface-visibility:hidden;-webkit-backface-visibility:hidden;border-radius:24px;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px}
+.flip-front{background:linear-gradient(145deg,#2a1800,#1a0e00);border:1px solid rgba(232,149,74,.25)}
+.flip-back{background:linear-gradient(145deg,#0e1a0a,#081200);border:1px solid rgba(76,175,118,.25);transform:rotateY(180deg)}
+.word-it{font-family:'Playfair Display',serif;font-size:36px;font-weight:700;color:var(--cream);text-align:center}
+.word-type{font-size:12px;color:var(--hint);margin-top:6px;letter-spacing:.06em}
+.word-tap{font-size:12px;color:var(--hint);margin-top:16px;opacity:.6}
+.word-zh{font-size:28px;font-weight:500;color:var(--green);text-align:center}
+.word-ex{font-size:13px;color:rgba(200,230,200,.7);text-align:center;margin-top:10px;font-style:italic}
+.word-ex-zh{font-size:12px;color:rgba(150,200,150,.5);text-align:center;margin-top:4px}
+
+/* Answer buttons */
+.answer-btns{display:flex;gap:12px;width:100%;max-width:340px}
+.ans-btn{flex:1;padding:16px;border-radius:16px;border:none;font-size:15px;font-weight:500;cursor:pointer;transition:transform .15s,opacity .15s;font-family:'DM Sans',sans-serif}
+.ans-btn:active{transform:scale(.95)}
+.btn-wrong{background:rgba(224,85,85,.15);color:#e07070;border:1px solid rgba(224,85,85,.3)}
+.btn-right{background:rgba(76,175,118,.15);color:#70d090;border:1px solid rgba(76,175,118,.3)}
+
+.vocab-counter{font-size:14px;color:var(--hint);text-align:center}
+.vocab-hint{font-size:12px;color:rgba(255,255,255,.2);text-align:center;margin-top:-10px}
+
+/* Progress dots */
+.progress-dots{display:flex;gap:6px;flex-wrap:wrap;justify-content:center;max-width:300px}
+.dot{width:8px;height:8px;border-radius:50%;background:rgba(255,255,255,.15);transition:background .3s}
+.dot.correct{background:var(--green)}
+.dot.wrong{background:var(--red)}
+.dot.current{background:var(--amber);transform:scale(1.3)}
+
+/* ── CHAT SCREEN ── */
+#chat{background:var(--night)}
+.chat-header{padding:54px 20px 14px;display:flex;align-items:center;gap:12px;flex-shrink:0;border-bottom:1px solid rgba(255,255,255,.07)}
+.chat-avatar{width:40px;height:40px;border-radius:50%;background:linear-gradient(135deg,#c4713a,#e8954a);display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0}
+.chat-info{flex:1}
+.chat-name{font-size:16px;font-weight:500}
+.chat-status{font-size:12px;color:var(--green);display:flex;align-items:center;gap:4px}
+.chat-status::before{content:'';width:6px;height:6px;background:var(--green);border-radius:50%;display:inline-block}
+.chat-timer{font-size:14px;font-weight:500;color:var(--amber);background:rgba(232,149,74,.12);padding:6px 14px;border-radius:20px}
+
+.chat-messages{flex:1;overflow-y:auto;padding:16px 16px 8px;display:flex;flex-direction:column;gap:10px;-webkit-overflow-scrolling:touch}
+.chat-messages::-webkit-scrollbar{display:none}
+.msg{max-width:82%;padding:12px 16px;border-radius:18px;font-size:15px;line-height:1.55;animation:msgIn .25s ease}
+@keyframes msgIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.msg.ai{background:rgba(255,255,255,.09);border-radius:4px 18px 18px 18px;align-self:flex-start;color:var(--cream)}
+.msg.user{background:linear-gradient(135deg,var(--amber-deep),var(--amber));color:#fff;border-radius:18px 4px 18px 18px;align-self:flex-end}
+.msg.system{background:rgba(74,143,232,.1);border:1px solid rgba(74,143,232,.2);color:rgba(150,190,255,.8);border-radius:12px;align-self:center;font-size:13px;text-align:center;max-width:90%}
+.msg-hint{font-size:12px;color:var(--hint);margin-top:4px;padding:0 4px;display:flex;gap:6px;align-items:center}
+.hint-toggle{background:none;border:none;color:var(--amber);font-size:12px;cursor:pointer;text-decoration:underline;font-family:'DM Sans',sans-serif}
+.typing-indicator{display:flex;gap:4px;padding:12px 16px;background:rgba(255,255,255,.09);border-radius:4px 18px 18px 18px;width:fit-content}
+.typing-dot{width:6px;height:6px;background:var(--hint);border-radius:50%;animation:typing 1.2s infinite}
+.typing-dot:nth-child(2){animation-delay:.2s}
+.typing-dot:nth-child(3){animation-delay:.4s}
+@keyframes typing{0%,60%,100%{transform:translateY(0)}30%{transform:translateY(-6px)}}
+
+.chat-input-wrap{padding:10px 14px;padding-bottom:calc(10px + env(safe-area-inset-bottom,0px));border-top:1px solid rgba(255,255,255,.07);display:flex;gap:10px;align-items:flex-end;flex-shrink:0;background:rgba(15,8,0,.8);backdrop-filter:blur(10px)}
+.chat-textarea{flex:1;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.1);border-radius:20px;padding:10px 16px;color:var(--cream);font-size:15px;font-family:'DM Sans',sans-serif;resize:none;outline:none;max-height:100px;min-height:40px;line-height:1.4}
+.chat-textarea::placeholder{color:var(--hint)}
+.send-btn{width:42px;height:42px;border-radius:50%;background:linear-gradient(135deg,var(--amber-deep),var(--amber));border:none;color:#fff;font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:transform .15s;flex-shrink:0}
+.send-btn:active{transform:scale(.92)}
+.send-btn:disabled{opacity:.4}
+
+/* ── STATS SCREEN ── */
+#stats{background:var(--night);overflow-y:auto;-webkit-overflow-scrolling:touch}
+#stats::-webkit-scrollbar{display:none}
+.stats-header{padding:54px 20px 20px;flex-shrink:0}
+.stats-scroll{padding:0 20px 100px}
+.calendar-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;margin-bottom:24px}
+.cal-day{aspect-ratio:1;border-radius:6px;background:rgba(255,255,255,.06);display:flex;align-items:center;justify-content:center;font-size:11px;color:var(--hint)}
+.cal-day.has-data{background:rgba(232,149,74,.2);color:var(--amber)}
+.cal-day.today{background:var(--amber);color:#fff;font-weight:500}
+.cal-day.full{background:var(--amber-deep);color:#fff}
+.chart-wrap{background:rgba(255,255,255,.06);border-radius:16px;padding:16px;margin-bottom:16px;border:1px solid rgba(255,255,255,.08)}
+.chart-title{font-size:13px;color:var(--hint);margin-bottom:12px;letter-spacing:.05em;text-transform:uppercase}
+.bar-chart{display:flex;align-items:flex-end;gap:8px;height:80px}
+.bar-col{flex:1;display:flex;flex-direction:column;align-items:center;gap:4px}
+.bar{width:100%;background:rgba(232,149,74,.25);border-radius:4px 4px 0 0;transition:height .6s cubic-bezier(.4,0,.2,1);min-height:4px}
+.bar.active{background:linear-gradient(0deg,var(--amber-deep),var(--amber-glow))}
+.bar-lbl{font-size:10px;color:var(--hint)}
+.badge-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.badge-card{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.08);border-radius:16px;padding:16px;text-align:center}
+.badge-icon{font-size:32px;margin-bottom:8px;display:block}
+.badge-name{font-size:14px;font-weight:500;margin-bottom:4px}
+.badge-desc{font-size:12px;color:var(--hint)}
+.badge-card.locked{opacity:.35}
+
+/* ── Celebration overlay ── */
+#celebrate{position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:1000;display:none;flex-direction:column;align-items:center;justify-content:center;gap:16px}
+#celebrate.show{display:flex}
+.celebrate-emoji{font-size:72px;animation:bounceIn .5s cubic-bezier(.2,1.5,.5,1)}
+@keyframes bounceIn{from{transform:scale(0)}to{transform:scale(1)}}
+.celebrate-title{font-family:'Playfair Display',serif;font-size:32px;font-weight:700;color:var(--amber);text-align:center}
+.celebrate-sub{font-size:16px;color:var(--hint);text-align:center;max-width:280px;line-height:1.5}
+.celebrate-xp{background:rgba(232,149,74,.2);border:1px solid rgba(232,149,74,.4);border-radius:20px;padding:8px 20px;font-size:15px;font-weight:500;color:var(--amber)}
+.celebrate-btn{background:linear-gradient(135deg,var(--amber-deep),var(--amber));color:#fff;border:none;padding:14px 40px;border-radius:20px;font-size:16px;font-weight:500;cursor:pointer;margin-top:8px;font-family:'DM Sans',sans-serif}
+.confetti{position:fixed;inset:0;pointer-events:none;z-index:999}
+
+/* ── Onboarding ── */
+#onboard{background:linear-gradient(170deg,#1a0e00 0%,#0f0800 100%);align-items:center;justify-content:center;text-align:center;padding:40px 32px}
+.onboard-logo{font-size:64px;margin-bottom:16px}
+.onboard-title{font-family:'Playfair Display',serif;font-size:40px;font-weight:700;line-height:1.1;margin-bottom:8px}
+.onboard-title em{font-style:italic;color:var(--amber)}
+.onboard-sub{font-size:16px;color:var(--hint);line-height:1.6;margin-bottom:40px}
+.onboard-features{text-align:left;background:rgba(255,255,255,.06);border-radius:20px;padding:20px;margin-bottom:36px;width:100%;border:1px solid rgba(255,255,255,.08)}
+.feat-row{display:flex;align-items:center;gap:14px;padding:10px 0;border-bottom:1px solid rgba(255,255,255,.06)}
+.feat-row:last-child{border:none}
+.feat-icon{font-size:24px;width:36px;text-align:center}
+.feat-text{font-size:15px;color:var(--cream)}
+.feat-text small{display:block;font-size:12px;color:var(--hint);margin-top:1px}
+.start-btn{width:100%;background:linear-gradient(135deg,var(--amber-deep),var(--amber-glow));color:#fff;border:none;padding:18px;border-radius:20px;font-size:17px;font-weight:500;cursor:pointer;font-family:'DM Sans',sans-serif;letter-spacing:.02em}
+</style>
+</head>
+<body>
+<div id="app">
+
+<!-- ONBOARD -->
+<div class="screen active" id="onboard">
+  <div class="onboard-logo">🇮🇹</div>
+  <h1 class="onboard-title">Ciao,<br><em>Benvenuto!</em></h1>
+  <p class="onboard-sub">你的私人意大利语学习助手<br>每天20分钟，坚持就是胜利</p>
+  <div class="onboard-features">
+    <div class="feat-row"><span class="feat-icon">🧠</span><div class="feat-text">艾宾浩斯记忆曲线<small>科学间隔复习，记得更牢</small></div></div>
+    <div class="feat-row"><span class="feat-icon">🔥</span><div class="feat-text">连续打卡系统<small>保持火焰，建立习惯</small></div></div>
+    <div class="feat-row"><span class="feat-icon">🤖</span><div class="feat-text">AI 对话练习<small>真实场景，流利表达</small></div></div>
+    <div class="feat-row"><span class="feat-icon">🏆</span><div class="feat-text">成就与升级<small>每一步都有成就感</small></div></div>
+  </div>
+  <button class="start-btn" onclick="startApp()">开始学习 →</button>
+</div>
+
+<!-- HOME -->
+<div class="screen" id="home">
+  <div class="home-bg">
+    <div class="orb orb1"></div>
+    <div class="orb orb2"></div>
+    <div class="orb orb3"></div>
+  </div>
+  <div class="home-scroll">
+    <div class="top-bar">
+      <div>
+        <div class="greeting" id="greeting-text">Buongiorno</div>
+        <div style="font-size:13px;color:rgba(255,255,255,.3);margin-top:1px" id="date-text"></div>
+      </div>
+      <div class="streak-badge">
+        <span class="streak-fire">🔥</span>
+        <span id="streak-num">0</span>
+        <span style="font-size:12px;color:var(--hint)">天</span>
+      </div>
+    </div>
+
+    <h1 class="hero-title">今天，<br>说一句<em>Italiano</em></h1>
+    <p class="hero-sub" id="daily-quote">La vita è bella — 生活是美好的</p>
+
+    <div class="xp-wrap">
+      <div class="xp-top">
+        <span class="xp-level">等级 <span id="level-num">1</span> · <span id="level-name">Principiante</span></span>
+        <span class="xp-pts"><span id="xp-num">0</span> / <span id="xp-next">200</span> XP</span>
+      </div>
+      <div class="xp-bar"><div class="xp-fill" id="xp-fill" style="width:0%"></div></div>
+    </div>
+
+    <p class="section-label">今日任务</p>
+    <div class="task-cards">
+      <div class="task-card" id="task-vocab" onclick="goVocab()">
+        <div class="task-icon">📚</div>
+        <div class="task-info">
+          <div class="task-name">词汇记忆</div>
+          <div class="task-desc" id="vocab-task-desc">今日20个单词 · 5个需复习</div>
+        </div>
+        <div class="task-arrow">›</div>
+      </div>
+      <div class="task-card" id="task-chat" onclick="goChat()">
+        <div class="task-icon">💬</div>
+        <div class="task-info">
+          <div class="task-name">AI 对话练习</div>
+          <div class="task-desc" id="chat-task-desc">20分钟情景对话</div>
+        </div>
+        <div class="task-arrow">›</div>
+      </div>
+    </div>
+
+    <p class="section-label">我的进度</p>
+    <div class="stats-row">
+      <div class="stat-box"><div class="stat-num" id="stat-words">0</div><div class="stat-lbl">已学单词</div></div>
+      <div class="stat-box"><div class="stat-num" id="stat-days">0</div><div class="stat-lbl">学习天数</div></div>
+      <div class="stat-box"><div class="stat-num" id="stat-conv">0</div><div class="stat-lbl">对话次数</div></div>
+    </div>
+  </div>
+  <div class="bottom-nav">
+    <div class="nav-btn active" id="nav-home" onclick="switchNav('home')"><div class="nav-icon">🏠</div><div class="nav-lbl">主页</div></div>
+    <div class="nav-btn" id="nav-vocab" onclick="goVocab()"><div class="nav-icon">📚</div><div class="nav-lbl">单词</div></div>
+    <div class="nav-btn" id="nav-chat" onclick="goChat()"><div class="nav-icon">💬</div><div class="nav-lbl">对话</div></div>
+    <div class="nav-btn" id="nav-stats" onclick="switchNav('stats')"><div class="nav-icon">📊</div><div class="nav-lbl">记录</div></div>
+  </div>
+</div>
+
+<!-- VOCAB -->
+<div class="screen" id="vocab">
+  <div class="vocab-header">
+    <button class="back-btn" onclick="goHome()">‹</button>
+    <span class="screen-title">词汇练习</span>
+    <div style="font-size:14px;color:var(--hint)"><span id="vocab-cur">1</span>/<span id="vocab-tot">20</span></div>
+  </div>
+
+  <div class="vocab-body">
+    <div class="progress-dots" id="progress-dots"></div>
+
+    <div class="flip-card" id="flip-card" onclick="flipCard()">
+      <div class="flip-inner" id="flip-inner">
+        <div class="flip-face flip-front">
+          <div class="word-it" id="word-it">ciao</div>
+          <div class="word-type" id="word-type">esclamazione</div>
+          <div class="word-tap">点击翻转 ↓</div>
+        </div>
+        <div class="flip-face flip-back">
+          <div class="word-zh" id="word-zh">你好 / 再见</div>
+          <div class="word-ex" id="word-ex">Ciao, come stai?</div>
+          <div class="word-ex-zh" id="word-ex-zh">你好，你怎么样？</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="answer-btns" id="answer-btns" style="display:none">
+      <button class="ans-btn btn-wrong" onclick="answerCard(false)">😬 没记住</button>
+      <button class="ans-btn btn-right" onclick="answerCard(true)">✓ 记住了！</button>
+    </div>
+
+    <div class="vocab-counter" id="vocab-counter">点击卡片查看翻译</div>
+    <div class="vocab-hint">已正确 <span id="correct-count">0</span> 个</div>
+  </div>
+</div>
+
+<!-- CHAT -->
+<div class="screen" id="chat">
+  <div class="chat-header">
+    <div class="chat-avatar">👩‍🏫</div>
+    <div class="chat-info">
+      <div class="chat-name">Sofia — 意大利语老师</div>
+      <div class="chat-status">在线 · 随时练习</div>
+    </div>
+    <div class="chat-timer" id="chat-timer">20:00</div>
+  </div>
+  <div class="chat-messages" id="chat-messages">
+    <div class="msg system">选择练习场景开始对话</div>
+    <div style="display:flex;flex-direction:column;gap:8px;padding:4px 0">
+      <button onclick="startScenario('cafe')" style="background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.1);border-radius:14px;padding:12px 16px;color:var(--cream);font-size:14px;cursor:pointer;text-align:left;font-family:'DM Sans',sans-serif">☕ 咖啡馆点餐</button>
+      <button onclick="startScenario('intro')" style="background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.1);border-radius:14px;padding:12px 16px;color:var(--cream);font-size:14px;cursor:pointer;text-align:left;font-family:'DM Sans',sans-serif">🤝 自我介绍</button>
+      <button onclick="startScenario('shop')" style="background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.1);border-radius:14px;padding:12px 16px;color:var(--cream);font-size:14px;cursor:pointer;text-align:left;font-family:'DM Sans',sans-serif">🛍️ 购物问价</button>
+      <button onclick="startScenario('directions')" style="background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.1);border-radius:14px;padding:12px 16px;color:var(--cream);font-size:14px;cursor:pointer;text-align:left;font-family:'DM Sans',sans-serif">🗺️ 问路</button>
+    </div>
+  </div>
+  <div class="chat-input-wrap">
+    <textarea class="chat-textarea" id="chat-input" placeholder="用意大利语回复..." rows="1" onkeydown="handleKey(event)" oninput="autoResize(this)"></textarea>
+    <button class="send-btn" id="send-btn" onclick="sendMessage()" disabled>↑</button>
+  </div>
+</div>
+
+<!-- STATS -->
+<div class="screen" id="stats">
+  <div class="stats-header">
+    <h2 class="screen-title" style="font-family:'Playfair Display',serif;font-size:28px">我的记录</h2>
+  </div>
+  <div class="stats-scroll">
+    <p class="section-label">本月打卡</p>
+    <div class="calendar-grid" id="calendar"></div>
+
+    <p class="section-label" style="margin-top:20px">本周单词</p>
+    <div class="chart-wrap">
+      <div class="bar-chart" id="bar-chart"></div>
+      <div style="display:flex;gap:8px;margin-top:8px" id="bar-labels"></div>
+    </div>
+
+    <p class="section-label">我的成就</p>
+    <div class="badge-grid" id="badge-grid"></div>
+  </div>
+  <div class="bottom-nav">
+    <div class="nav-btn" onclick="switchNav('home')"><div class="nav-icon">🏠</div><div class="nav-lbl">主页</div></div>
+    <div class="nav-btn" onclick="goVocab()"><div class="nav-icon">📚</div><div class="nav-lbl">单词</div></div>
+    <div class="nav-btn" onclick="goChat()"><div class="nav-icon">💬</div><div class="nav-lbl">对话</div></div>
+    <div class="nav-btn active"><div class="nav-icon">📊</div><div class="nav-lbl">记录</div></div>
+  </div>
+</div>
+
+<!-- CELEBRATE -->
+<div id="celebrate">
+  <canvas class="confetti" id="confetti-canvas"></canvas>
+  <div class="celebrate-emoji" id="cel-emoji">🎉</div>
+  <div class="celebrate-title" id="cel-title">Bravo!</div>
+  <div class="celebrate-sub" id="cel-sub">今日词汇完成！</div>
+  <div class="celebrate-xp" id="cel-xp">+50 XP</div>
+  <button class="celebrate-btn" id="cel-btn" onclick="closeCelebrate()">继续 →</button>
+</div>
+
+</div>
+<script>
+// ─── State ───────────────────────────────────────────────────────
+const S = {
+  xp: 0, level: 1, streak: 0, totalWords: 0, totalDays: 0, totalConv: 0,
+  vocabDoneToday: false, chatDoneToday: false,
+  history: [], // {date, words, conv}
+  srsData: {}, // word -> {nextReview, interval, ease}
+};
+
+const LEVELS = [
+  {name:'Principiante',xp:0},{name:'Principiante+',xp:200},
+  {name:'Elementare',xp:500},{name:'Elementare+',xp:1000},
+  {name:'Intermedio',xp:2000},{name:'Intermedio+',xp:3500},
+  {name:'Avanzato',xp:6000},{name:'Avanzato+',xp:10000},
+  {name:'Esperto',xp:16000},{name:'Maestro',xp:25000}
+];
+
+const QUOTES = [
+  'La vita è bella — 生活是美好的',
+  'Chi ha un perché può sopportare qualsiasi come — 有目标的人能忍受一切',
+  'Piano piano si va lontano — 慢慢来，走得更远',
+  'Il bello viene a chi sa aspettare — 美好属于会等待的人',
+  'Ogni giorno è una nuova opportunità — 每天都是新机会',
+];
+
+// ─── Vocab ───────────────────────────────────────────────────────
+const VOCAB_LIST = [
+  {it:'ciao',zh:'你好 / 再见',type:'esclamazione',ex:'Ciao, come stai?',exzh:'你好，你怎么样？'},
+  {it:'buongiorno',zh:'早上好',type:'saluto',ex:'Buongiorno, signore!',exzh:'先生，早上好！'},
+  {it:'grazie',zh:'谢谢',type:'esclamazione',ex:'Grazie mille!',exzh:'非常感谢！'},
+  {it:'prego',zh:'不客气',type:'risposta',ex:'Prego, è un piacere.',exzh:'不客气，这是我的荣幸。'},
+  {it:'scusa',zh:'对不起',type:'esclamazione',ex:'Scusa, non capisco.',exzh:'对不起，我不明白。'},
+  {it:'per favore',zh:'请',type:'avverbio',ex:'Un caffè per favore.',exzh:'请来一杯咖啡。'},
+  {it:'dove',zh:'在哪里',type:'avverbio',ex:"Dove è il bagno?",exzh:'洗手间在哪里？'},
+  {it:'quanto costa',zh:'多少钱',type:'frase',ex:'Quanto costa questo?',exzh:'这个多少钱？'},
+  {it:'bello',zh:'美丽的',type:'aggettivo',ex:'Che bello!',exzh:'多美啊！'},
+  {it:'mangiare',zh:'吃',type:'verbo',ex:'Voglio mangiare la pizza.',exzh:'我想吃披萨。'},
+  {it:'bere',zh:'喝',type:'verbo',ex:'Voglio bere acqua.',exzh:'我想喝水。'},
+  {it:'parlare',zh:'说话',type:'verbo',ex:'Parlo italiano un po\'.',exzh:'我会一点意大利语。'},
+  {it:'capire',zh:'理解',type:'verbo',ex:'Non capisco.',exzh:'我不理解。'},
+  {it:'amore',zh:'爱',type:'sostantivo',ex:"L'amore è ovunque.",exzh:'爱无处不在。'},
+  {it:'amico',zh:'朋友',type:'sostantivo',ex:'È il mio amico.',exzh:'这是我的朋友。'},
+  {it:'casa',zh:'家',type:'sostantivo',ex:'La mia casa è grande.',exzh:'我的家很大。'},
+  {it:'acqua',zh:'水',type:'sostantivo',ex:"L'acqua è fresca.",exzh:'水很凉。'},
+  {it:'caffè',zh:'咖啡',type:'sostantivo',ex:'Un caffè, per favore.',exzh:'请来一杯咖啡。'},
+  {it:'pizza',zh:'披萨',type:'sostantivo',ex:'La pizza è deliziosa!',exzh:'披萨太好吃了！'},
+  {it:'oggi',zh:'今天',type:'avverbio',ex:"Oggi è una bella giornata.",exzh:'今天是美好的一天。'},
+  {it:'domani',zh:'明天',type:'avverbio',ex:'Ci vediamo domani.',exzh:'明天见。'},
+  {it:'lavoro',zh:'工作',type:'sostantivo',ex:'Ho molto lavoro.',exzh:'我有很多工作。'},
+  {it:'tempo',zh:'时间/天气',type:'sostantivo',ex:'Non ho tempo.',exzh:'我没有时间。'},
+  {it:'vino',zh:'葡萄酒',type:'sostantivo',ex:'Un bicchiere di vino rosso.',exzh:'一杯红葡萄酒。'},
+  {it:'treno',zh:'火车',type:'sostantivo',ex:'Il treno è in ritardo.',exzh:'火车晚点了。'},
+  {it:'buono',zh:'好的/美味的',type:'aggettivo',ex:'È molto buono!',exzh:'非常好吃！'},
+  {it:'grande',zh:'大的/伟大的',type:'aggettivo',ex:'Roma è una grande città.',exzh:'罗马是一座伟大的城市。'},
+  {it:'piccolo',zh:'小的',type:'aggettivo',ex:'Ho un appartamento piccolo.',exzh:'我有一套小公寓。'},
+  {it:'subito',zh:'立刻',type:'avverbio',ex:'Vengo subito!',exzh:'我马上来！'},
+  {it:'sempre',zh:'总是',type:'avverbio',ex:'Ti amo sempre.',exzh:'我永远爱你。'},
+];
+
+// SRS intervals (days)
+const SRS_INTERVALS = [1, 3, 7, 14, 30, 60, 120];
+
+function getSRSWords() {
+  const today = todayStr();
+  const due = VOCAB_LIST.filter(w => {
+    const d = S.srsData[w.it];
+    if (!d) return true; // new
+    return d.nextReview <= today;
+  });
+  // mix: up to 10 review + fill with new
+  const review = due.filter(w => S.srsData[w.it]);
+  const newW = due.filter(w => !S.srsData[w.it]);
+  const picked = [...review.slice(0,10), ...newW].slice(0,20);
+  // pad if less than 20
+  if(picked.length < 20) {
+    const rest = VOCAB_LIST.filter(w => !picked.includes(w));
+    return [...picked, ...rest].slice(0,20);
+  }
+  return picked;
+}
+
+// ─── Vocab Session ────────────────────────────────────────────────
+let vocabSession = [];
+let vocabIdx = 0;
+let vocabCorrect = 0;
+let cardFlipped = false;
+
+function initVocab() {
+  vocabSession = getSRSWords();
+  vocabIdx = 0; vocabCorrect = 0; cardFlipped = false;
+  renderDots();
+  showCard(0);
+  document.getElementById('flip-inner').classList.remove('flipped');
+  document.getElementById('answer-btns').style.display = 'none';
+  document.getElementById('vocab-counter').textContent = '点击卡片查看翻译';
+}
+
+function renderDots() {
+  const c = document.getElementById('progress-dots');
+  c.innerHTML = vocabSession.map((_, i) =>
+    `<div class="dot ${i===0?'current':''}" id="dot-${i}"></div>`
+  ).join('');
+}
+
+function showCard(i) {
+  const w = vocabSession[i];
+  document.getElementById('word-it').textContent = w.it;
+  document.getElementById('word-type').textContent = w.type;
+  document.getElementById('word-zh').textContent = w.zh;
+  document.getElementById('word-ex').textContent = w.ex;
+  document.getElementById('word-ex-zh').textContent = w.exzh;
+  document.getElementById('vocab-cur').textContent = i+1;
+  document.getElementById('vocab-tot').textContent = vocabSession.length;
+  document.getElementById('correct-count').textContent = vocabCorrect;
+}
+
+function flipCard() {
+  if(cardFlipped) return;
+  cardFlipped = true;
+  document.getElementById('flip-inner').classList.add('flipped');
+  document.getElementById('answer-btns').style.display = 'flex';
+  document.getElementById('vocab-counter').textContent = '你记住了吗？';
+}
+
+function answerCard(correct) {
+  const w = vocabSession[vocabIdx];
+  // update dot
+  const dot = document.getElementById('dot-'+vocabIdx);
+  if(dot) dot.className = 'dot '+(correct?'correct':'wrong');
+
+  // SRS update
+  const prev = S.srsData[w.it] || {interval:0, ease:2.5};
+  let interval;
+  if(correct) {
+    interval = SRS_INTERVALS[Math.min(prev.interval, SRS_INTERVALS.length-1)];
+    S.srsData[w.it] = {nextReview: futureDateStr(interval), interval: Math.min(prev.interval+1, SRS_INTERVALS.length-1), ease: prev.ease};
+    vocabCorrect++;
+  } else {
+    S.srsData[w.it] = {nextReview: futureDateStr(1), interval:0, ease: Math.max(1.3, prev.ease-0.2)};
+  }
+
+  vocabIdx++;
+  if(vocabIdx >= vocabSession.length) {
+    finishVocab();
+    return;
+  }
+  cardFlipped = false;
+  document.getElementById('flip-inner').classList.remove('flipped');
+  document.getElementById('answer-btns').style.display = 'none';
+  document.getElementById('vocab-counter').textContent = '点击卡片查看翻译';
+
+  // update next dot
+  const nextDot = document.getElementById('dot-'+vocabIdx);
+  if(nextDot) nextDot.className = 'dot current';
+
+  // slight delay for flip animation
+  setTimeout(()=>showCard(vocabIdx), 100);
+}
+
+function finishVocab() {
+  addXP(50 + vocabCorrect*3);
+  S.totalWords += vocabCorrect;
+  S.vocabDoneToday = true;
+  saveState();
+  updateHomeUI();
+  showCelebrate('📚', 'Ottimo lavoro!',
+    `${vocabCorrect}/${vocabSession.length} 个单词掌握✨`, 50+vocabCorrect*3, ()=>goHome());
+}
+
+// ─── Chat ──────────────────────────────────────────────────────────
+let chatHistory = [];
+let chatTimerInterval = null;
+let chatSecondsLeft = 1200;
+let currentScenario = null;
+let chatActive = false;
+
+const SCENARIOS = {
+  cafe: {
+    name:'咖啡馆点餐',
+    system:`You are Sofia, a friendly Italian teacher. The student is ordering at an Italian café.
+Speak mostly in Italian but provide Chinese hints when the student struggles.
+Keep sentences simple and educational. After each student message, gently correct any errors.
+Encourage them warmly. Always respond in this format: Italian dialogue first, then in parentheses the Chinese translation of what you said.
+When the student does something right, praise them in Italian.`
+  },
+  intro: {
+    name:'自我介绍',
+    system:`You are Sofia, an Italian teacher. Help the student practice self-introduction in Italian.
+Teach them: name, age, nationality, job/study, hobbies. Keep it encouraging and simple.
+Respond in Italian with Chinese translation in parentheses. Correct mistakes gently.`
+  },
+  shop: {
+    name:'购物问价',
+    system:`You are Sofia playing a shop owner in Italy. Help the student practice shopping phrases.
+Teach: prices, colors, sizes, asking for help. Keep it fun and practical.
+Respond in Italian with Chinese translation in parentheses. Praise correct sentences.`
+  },
+  directions: {
+    name:'问路',
+    system:`You are Sofia playing a Roman local. Help the student practice asking for and giving directions.
+Teach: turn left/right, go straight, how far, landmarks. Keep it simple.
+Respond in Italian with Chinese translation in parentheses. Be encouraging.`
+  }
+};
+
+function startScenario(key) {
+  currentScenario = key;
+  chatHistory = [];
+  chatActive = true;
+  const msgs = document.getElementById('chat-messages');
+  msgs.innerHTML = '';
+  document.getElementById('send-btn').disabled = false;
+
+  addChatMsg('system', `场景：${SCENARIOS[key].name}`);
+  startChatTimer();
+  showTyping(true);
+
+  const prompts = {
+    cafe: 'Ciao! Benvenuto nel mio bar! Cosa prendi? (你好！欢迎来到我的咖啡馆！你要点什么？)',
+    intro: 'Ciao! Sono Sofia. Come ti chiami? (你好！我是Sofia，你叫什么名字？)',
+    shop: 'Buongiorno! Posso aiutarti? (早上好！我可以帮你吗？)',
+    directions: 'Ciao! Hai bisogno di aiuto? (你好！需要帮助吗？)'
+  };
+  setTimeout(()=>{
+    showTyping(false);
+    addChatMsg('ai', prompts[key]);
+  }, 1200);
+}
+
+function startChatTimer() {
+  clearInterval(chatTimerInterval);
+  chatSecondsLeft = 1200;
+  updateTimerDisplay();
+  chatTimerInterval = setInterval(()=>{
+    chatSecondsLeft--;
+    updateTimerDisplay();
+    if(chatSecondsLeft <= 0) finishChat();
+  }, 1000);
+}
+
+function updateTimerDisplay() {
+  const m = Math.floor(chatSecondsLeft/60);
+  const s = chatSecondsLeft%60;
+  document.getElementById('chat-timer').textContent =
+    `${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
+}
+
+function addChatMsg(type, text) {
+  const div = document.createElement('div');
+  div.className = `msg ${type}`;
+  div.textContent = text;
+  const msgs = document.getElementById('chat-messages');
+  msgs.appendChild(div);
+  msgs.scrollTop = msgs.scrollHeight;
+}
+
+let typingEl = null;
+function showTyping(show) {
+  const msgs = document.getElementById('chat-messages');
+  if(show && !typingEl) {
+    typingEl = document.createElement('div');
+    typingEl.className = 'typing-indicator';
+    typingEl.innerHTML = '<div class="typing-dot"></div><div class="typing-dot"></div><div class="typing-dot"></div>';
+    msgs.appendChild(typingEl);
+    msgs.scrollTop = msgs.scrollHeight;
+  } else if(!show && typingEl) {
+    typingEl.remove();
+    typingEl = null;
+  }
+}
+
+async function sendMessage() {
+  const input = document.getElementById('chat-input');
+  const text = input.value.trim();
+  if(!text || !chatActive) return;
+  input.value = '';
+  input.style.height = '40px';
+  document.getElementById('send-btn').disabled = true;
+
+  addChatMsg('user', text);
+  chatHistory.push({role:'user', content: text});
+
+  showTyping(true);
+
+  try {
+    const scenario = SCENARIOS[currentScenario];
+    const resp = await fetch('https://api.anthropic.com/v1/messages', {
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({
+        model:'claude-sonnet-4-20250514',
+        max_tokens:400,
+        system: scenario.system,
+        messages: chatHistory
+      })
+    });
+    const data = await resp.json();
+    const reply = data.content?.[0]?.text || 'Mi dispiace, ho un problema. Riproviamo!';
+    showTyping(false);
+    addChatMsg('ai', reply);
+    chatHistory.push({role:'assistant', content: reply});
+  } catch(e) {
+    showTyping(false);
+    addChatMsg('ai', 'Scusa, ho un piccolo problema tecnico. (对不起，技术问题，请重试)');
+  }
+  document.getElementById('send-btn').disabled = false;
+}
+
+function handleKey(e) {
+  if(e.key === 'Enter' && !e.shiftKey) {
+    e.preventDefault();
+    sendMessage();
+  }
+  document.getElementById('send-btn').disabled = !e.target.value.trim();
+}
+
+function autoResize(el) {
+  el.style.height = 'auto';
+  el.style.height = Math.min(el.scrollHeight, 100)+'px';
+  document.getElementById('send-btn').disabled = !el.value.trim();
+}
+
+function finishChat() {
+  clearInterval(chatTimerInterval);
+  chatActive = false;
+  S.totalConv++;
+  S.chatDoneToday = true;
+  addXP(80);
+  saveState();
+  updateHomeUI();
+  addChatMsg('system', '🎉 对话练习完成！太棒了！');
+  setTimeout(()=>{
+    showCelebrate('💬','Fantastico!','20分钟对话练习完成！你的意大利语在进步！', 80, ()=>goHome());
+  }, 1000);
+}
+
+// ─── XP / Level ──────────────────────────────────────────────────
+function addXP(pts) {
+  S.xp += pts;
+  const prev = S.level;
+  while(S.level < LEVELS.length-1 && S.xp >= LEVELS[S.level].xp) S.level++;
+  if(S.level > prev) {
+    setTimeout(()=>showCelebrate('⭐',`升级了！Livello ${S.level}`,
+      `你已到达 ${LEVELS[S.level-1].name} 等级！`, 0, ()=>{}), 500);
+  }
+}
+
+// ─── Celebrate ───────────────────────────────────────────────────
+let celCallback = null;
+function showCelebrate(emoji, title, sub, xp, cb) {
+  document.getElementById('cel-emoji').textContent = emoji;
+  document.getElementById('cel-title').textContent = title;
+  document.getElementById('cel-sub').textContent = sub;
+  document.getElementById('cel-xp').textContent = xp > 0 ? `+${xp} XP` : '🎊';
+  document.getElementById('cel-xp').style.display = xp>=0?'block':'none';
+  celCallback = cb;
+  document.getElementById('celebrate').classList.add('show');
+  launchConfetti();
+}
+
+function closeCelebrate() {
+  document.getElementById('celebrate').classList.remove('show');
+  if(celCallback) { celCallback(); celCallback=null; }
+}
+
+function launchConfetti() {
+  const canvas = document.getElementById('confetti-canvas');
+  const ctx = canvas.getContext('2d');
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+  const colors = ['#e8954a','#f5a623','#4caf76','#4a8fe8','#e05555','#fff'];
+  const pieces = Array.from({length:80},()=>({
+    x: Math.random()*canvas.width,
+    y: -10,
+    w: Math.random()*8+4,
+    h: Math.random()*12+6,
+    color: colors[Math.floor(Math.random()*colors.length)],
+    vx: (Math.random()-0.5)*4,
+    vy: Math.random()*4+2,
+    rot: Math.random()*360,
+    rotV: (Math.random()-0.5)*6,
+  }));
+  let frame = 0;
+  function draw() {
+    ctx.clearRect(0,0,canvas.width,canvas.height);
+    pieces.forEach(p=>{
+      ctx.save();
+      ctx.translate(p.x,p.y);
+      ctx.rotate(p.rot*Math.PI/180);
+      ctx.fillStyle = p.color;
+      ctx.fillRect(-p.w/2,-p.h/2,p.w,p.h);
+      ctx.restore();
+      p.x+=p.vx; p.y+=p.vy; p.rot+=p.rotV; p.vy+=0.05;
+    });
+    frame++;
+    if(frame < 120) requestAnimationFrame(draw);
+    else ctx.clearRect(0,0,canvas.width,canvas.height);
+  }
+  draw();
+}
+
+// ─── Stats Screen ────────────────────────────────────────────────
+function renderStats() {
+  renderCalendar();
+  renderBarChart();
+  renderBadges();
+}
+
+function renderCalendar() {
+  const today = new Date();
+  const daysInMonth = new Date(today.getFullYear(), today.getMonth()+1, 0).getDate();
+  const c = document.getElementById('calendar');
+  const days = ['日','一','二','三','四','五','六'];
+  c.innerHTML = days.map(d=>`<div class="cal-day" style="font-size:10px;color:var(--hint);background:none">${d}</div>`).join('');
+  const firstDay = new Date(today.getFullYear(), today.getMonth(), 1).getDay();
+  for(let i=0;i<firstDay;i++) c.innerHTML += `<div></div>`;
+  for(let d=1;d<=daysInMonth;d++) {
+    const dateStr = `${today.getFullYear()}-${String(today.getMonth()+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+    const isToday = d===today.getDate();
+    const hasData = S.history.some(h=>h.date===dateStr);
+    const cls = isToday?'today':hasData?'has-data':'';
+    c.innerHTML += `<div class="cal-day ${cls}">${d}</div>`;
+  }
+}
+
+function renderBarChart() {
+  const days = ['一','二','三','四','五','六','日'];
+  const today = new Date();
+  const data = days.map((_,i)=>{
+    const d = new Date(today);
+    d.setDate(today.getDate() - (6-i));
+    const ds = `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+    const h = S.history.find(h=>h.date===ds);
+    return {label:days[i], val: h?h.words:0};
+  });
+  const max = Math.max(...data.map(d=>d.val), 1);
+  const chart = document.getElementById('bar-chart');
+  chart.innerHTML = data.map((d,i)=>{
+    const pct = Math.round((d.val/max)*80);
+    const isToday = i===6;
+    return `<div class="bar-col">
+      <div style="font-size:11px;color:var(--hint);min-height:20px;display:flex;align-items:flex-end">${d.val||''}</div>
+      <div class="bar ${isToday?'active':''}" style="height:${pct}px"></div>
+      <div class="bar-lbl">${d.label}</div>
+    </div>`;
+  }).join('');
+}
+
+const BADGES = [
+  {icon:'🔥',name:'三连击',desc:'连续学习3天',check:()=>S.streak>=3},
+  {icon:'📚',name:'百词斩',desc:'累计记住100个单词',check:()=>S.totalWords>=100},
+  {icon:'💬',name:'第一课',desc:'完成第一次对话',check:()=>S.totalConv>=1},
+  {icon:'⭐',name:'一周坚持',desc:'连续学习7天',check:()=>S.streak>=7},
+  {icon:'🌟',name:'30天挑战',desc:'连续学习30天',check:()=>S.streak>=30},
+  {icon:'🏆',name:'词汇大师',desc:'累计记住500个单词',check:()=>S.totalWords>=500},
+];
+
+function renderBadges() {
+  const c = document.getElementById('badge-grid');
+  c.innerHTML = BADGES.map(b=>`
+    <div class="badge-card ${b.check()?'':'locked'}">
+      <span class="badge-icon">${b.icon}</span>
+      <div class="badge-name">${b.name}</div>
+      <div class="badge-desc">${b.desc}</div>
+    </div>`).join('');
+}
+
+// ─── Navigation ───────────────────────────────────────────────────
+function switchNav(name) {
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.getElementById(name).classList.add('active');
+  if(name==='stats') renderStats();
+}
+
+function goHome() {
+  clearInterval(chatTimerInterval);
+  switchNav('home');
+  updateHomeUI();
+}
+
+function goVocab() {
+  switchNav('vocab');
+  initVocab();
+}
+
+function goChat() {
+  switchNav('chat');
+  if(!chatActive) {
+    document.getElementById('chat-messages').innerHTML =
+      '<div class="msg system">选择练习场景开始对话</div>' +
+      ['cafe','intro','shop','directions'].map(k=>
+        `<button onclick="startScenario('${k}')" style="background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.1);border-radius:14px;padding:12px 16px;color:var(--cream);font-size:14px;cursor:pointer;text-align:left;font-family:'DM Sans',sans-serif">${{cafe:'☕ 咖啡馆点餐',intro:'🤝 自我介绍',shop:'🛍️ 购物问价',directions:'🗺️ 问路'}[k]}</button>`
+      ).join('');
+  }
+}
+
+// ─── UI Updates ──────────────────────────────────────────────────
+function updateHomeUI() {
+  // greeting
+  const h = new Date().getHours();
+  const g = h<12?'Buongiorno':h<18?'Buon pomeriggio':'Buonasera';
+  document.getElementById('greeting-text').textContent = g;
+  document.getElementById('date-text').textContent = new Date().toLocaleDateString('zh-CN',{month:'long',day:'numeric',weekday:'long'});
+
+  // quote
+  document.getElementById('daily-quote').textContent = QUOTES[new Date().getDate()%QUOTES.length];
+
+  // streak
+  document.getElementById('streak-num').textContent = S.streak;
+
+  // xp
+  const lvl = LEVELS[S.level-1];
+  const nextLvl = LEVELS[S.level] || LEVELS[LEVELS.length-1];
+  document.getElementById('level-num').textContent = S.level;
+  document.getElementById('level-name').textContent = lvl.name;
+  document.getElementById('xp-num').textContent = S.xp;
+  document.getElementById('xp-next').textContent = nextLvl.xp;
+  const pct = Math.min(100, Math.round(((S.xp - lvl.xp) / (nextLvl.xp - lvl.xp)) * 100));
+  document.getElementById('xp-fill').style.width = pct+'%';
+
+  // task cards
+  const tv = document.getElementById('task-vocab');
+  const tc = document.getElementById('task-chat');
+  document.querySelectorAll('.task-done-badge, .review-badge').forEach(e=>e.remove());
+  if(S.vocabDoneToday) {
+    tv.classList.add('done');
+    const b=document.createElement('div');b.className='task-done-badge';b.textContent='✓ 已完成';tv.appendChild(b);
+  } else {
+    tv.classList.remove('done');
+    const reviewCount = VOCAB_LIST.filter(w=>{const d=S.srsData[w.it];return d&&d.nextReview<=todayStr();}).length;
+    document.getElementById('vocab-task-desc').textContent = `今日20个单词 · ${reviewCount}个需复习`;
+    if(reviewCount>0){const b=document.createElement('div');b.className='review-badge';b.textContent=`复习 ${reviewCount}`;tv.appendChild(b);}
+  }
+  if(S.chatDoneToday) {
+    tc.classList.add('done');
+    const b=document.createElement('div');b.className='task-done-badge';b.textContent='✓ 已完成';tc.appendChild(b);
+    document.getElementById('chat-task-desc').textContent='今日练习已完成 🎉';
+  }
+
+  // stats
+  document.getElementById('stat-words').textContent = S.totalWords;
+  document.getElementById('stat-days').textContent = S.totalDays;
+  document.getElementById('stat-conv').textContent = S.totalConv;
+}
+
+// ─── Persistence ─────────────────────────────────────────────────
+function saveState() {
+  const today = todayStr();
+  if(!S.history.find(h=>h.date===today)) {
+    S.history.push({date:today, words:0, conv:0});
+  }
+  const rec = S.history.find(h=>h.date===today);
+  rec.words = S.totalWords;
+  rec.conv = S.totalConv;
+  try { localStorage.setItem('italiano_state', JSON.stringify(S)); } catch(e){}
+}
+
+function loadState() {
+  try {
+    const raw = localStorage.getItem('italiano_state');
+    if(raw) { const saved=JSON.parse(raw); Object.assign(S, saved); }
+  } catch(e){}
+}
+
+function checkStreak() {
+  const today = todayStr();
+  const yesterday = futureDateStr(-1);
+  const hasToday = S.history.find(h=>h.date===today);
+  const hasYesterday = S.history.find(h=>h.date===yesterday);
+  if(!hasToday) {
+    if(!hasYesterday && S.history.length>0) S.streak=0;
+    S.totalDays++;
+  }
+}
+
+function checkDayReset() {
+  const today = todayStr();
+  const stored = localStorage.getItem('italiano_last_day');
+  if(stored !== today) {
+    S.vocabDoneToday = false;
+    S.chatDoneToday = false;
+    localStorage.setItem('italiano_last_day', today);
+  }
+}
+
+// ─── Helpers ─────────────────────────────────────────────────────
+function todayStr() {
+  const d = new Date();
+  return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+}
+function futureDateStr(n) {
+  const d = new Date();
+  d.setDate(d.getDate()+n);
+  return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+}
+
+// ─── Start ───────────────────────────────────────────────────────
+function startApp() {
+  loadState();
+  checkDayReset();
+  checkStreak();
+  // first day
+  if(S.totalDays === 0) {
+    S.totalDays = 1;
+    S.streak = 1;
+    const today = todayStr();
+    if(!S.history.find(h=>h.date===today)) S.history.push({date:today,words:0,conv:0});
+    localStorage.setItem('italiano_last_day', today);
+  }
+  saveState();
+  switchNav('home');
+  updateHomeUI();
+}
+
+// auto-start if returning user
+loadState();
+if(S.totalDays > 0) {
+  checkDayReset();
+  checkStreak();
+  saveState();
+  switchNav('home');
+  updateHomeUI();
+}
+</script>
+</body>
+</html>
